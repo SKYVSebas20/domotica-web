@@ -79,9 +79,9 @@ flex-direction: column;
 }
 /* ================= Boton Check list ================= */
 
-.container {
+/*.container {
 
-}
+}*/
 
 .label {
   height: 60px;
@@ -139,3 +139,8 @@ flex-direction: column;
   background-image:var(--color-secundario);
   left: 10px;
 }
+
+/* Estados del texto */
+#status-texto.ok { color: var(--color-acento); }
+#status-texto.error { color: #ff4d4d; }
+#status-texto.loading { color: #e1ad01; font-style: italic; }

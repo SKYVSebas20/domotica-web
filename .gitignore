@@ -1,0 +1,11 @@
+# (si ya existe, solo añade estas líneas)
+# Node
+node_modules/
+**/node_modules/
+
+# Logs / runtime
+Backend/logs/
+**/logs/
+
+# Env
+.env

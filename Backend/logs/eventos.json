@@ -1,0 +1,10 @@
+[
+  {
+    "id": "b8ad987c86c00819c2b83ed98",
+    "ts": "2026-02-05T01:56:32.280Z",
+    "deviceId": "demo-1",
+    "tipo": "luz",
+    "valor": "on",
+    "fuente": "manual"
+  }
+]
