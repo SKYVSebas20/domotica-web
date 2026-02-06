@@ -7,6 +7,18 @@ const path = require("path");
 const app = express();
 app.use(express.json());
 
+//CORS para Live Server (127.0.0.1:5500)
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // Preflight
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+
+  next();
+});
+
 //Puerto y ruta del archivo de logs
 const PORT = 3001;
 const LOG_PATH = path.join(__dirname, "logs", "eventos.json");
@@ -17,9 +29,43 @@ app.get("/api/health", (req, res) => {
 
 app.get("/api/eventos", async (req, res) => {
   const raw = await fs.readFile(LOG_PATH, "utf8");
-  const cleaned = raw.replace(/^\uFEFF/, "").trim(); // quita BOM y espacios/saltos
+  const cleaned = raw.replace(/^\uFEFF/, "").trim();
   const eventos = JSON.parse(cleaned);
   res.json(eventos);
+});
+
+// 👇 NUEVO: Endpoint para obtener el último estado de un dispositivo
+app.get("/api/eventos/:deviceId/ultimo", async (req, res) => {
+  try {
+    const { deviceId } = req.params;
+    
+    const raw = await fs.readFile(LOG_PATH, "utf8");
+    const cleaned = raw.replace(/^\uFEFF/, "").trim();
+    const eventos = JSON.parse(cleaned);
+
+    // Filtrar eventos del dispositivo y tipo "power"
+    const eventosFiltrados = eventos.filter(
+      e => e.deviceId === deviceId && e.tipo === "power"
+    );
+
+    if (eventosFiltrados.length === 0) {
+      // Si no hay eventos previos, devolver "off" por defecto
+      return res.json({ valor: "off", encontrado: false });
+    }
+
+    // Obtener el último evento (el más reciente)
+    const ultimoEvento = eventosFiltrados[eventosFiltrados.length - 1];
+    
+    res.json({ 
+      valor: ultimoEvento.valor,
+      ts: ultimoEvento.ts,
+      encontrado: true 
+    });
+
+  } catch (error) {
+    console.error("Error al obtener último evento:", error);
+    res.status(500).json({ error: "Error al leer eventos" });
+  }
 });
 
 app.post("/api/eventos", async (req, res) => {

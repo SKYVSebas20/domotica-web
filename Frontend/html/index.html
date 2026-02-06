@@ -5,15 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOMOTICA-WEB</title>
     <link rel="stylesheet" href="../css/styles.css">
-    <script src="../JavaScript/index_scripts.js"></script>
 </head>
     <body>
-        <aside class="aside-nav">
-            <ul class="nav-links">
-                <li><span class="home-icon"></span></li>
-                <li><span class="light-icon"></span></li>
-            </ul>
+        <aside class="sidebar">
+
+        <nav class="sidebar__nav">
+            <a class="sidebar__item" href="#">
+            <span class="sidebar__icon">⌂</span><span>Dashboard</span>
+            </a>
+
+            <a class="sidebar__item is-active" href="#">
+            <span class="sidebar__icon">☑</span><span>Tasks</span>
+            </a>
+
+            <a class="sidebar__item" href="#">
+            <span class="sidebar__icon">✉</span><span>Inbox</span>
+            </a>
+
+            <a class="sidebar__item" href="#">
+            <span class="sidebar__icon">🗓</span><span>Calendar</span>
+            </a>
+
+            <div class="sidebar__divider"></div>
+
+            <a class="sidebar__item is-disabled" href="#">
+            <span class="sidebar__icon">👥</span><span>Meeting</span>
+            </a>
+            <a class="sidebar__item is-disabled" href="#">
+            <span class="sidebar__icon">▭</span><span>Dock</span>
+            </a>
+        </nav>
         </aside>
+
         <main class="main-section">
             <div class="On-Off-switch">
                 <h1>Estado: <span id="status-texto">OFF</span></h1>
@@ -23,5 +46,6 @@
                 </div>
             </div>
         </main>
+        <script src="../JavaScript/index_scripts.js"></script>
     </body>
 </html>
