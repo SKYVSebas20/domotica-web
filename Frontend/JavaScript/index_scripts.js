@@ -1,12 +1,21 @@
-//Seleccionamos los elementos
-const checkbox = document.getElementById('checkbox');
-const estadoTexto = document.getElementById('status-texto');
+const API = "http://localhost:3000";
 
-//Función para actualizar el estado en la UI
+// Seleccionamos elementos
+const checkbox = document.getElementById("checkbox");
+const estadoTexto = document.getElementById("status-texto");
+
+if (!checkbox || !estadoTexto) {
+  console.error("UI incompleta: falta #checkbox o #status-texto");
+}
+
+// UI state
 function setEstadoUI(estado, mensajeCustom = null) {
+  if (!checkbox || !estadoTexto) return;
+
+  const estadoValido = String(estado).toLowerCase();
   estadoTexto.classList.remove("ok", "error", "loading");
 
-  switch (estado) {
+  switch (estadoValido) {
     case "off":
       estadoTexto.textContent = "APAGADO";
       checkbox.checked = false;
@@ -27,7 +36,7 @@ function setEstadoUI(estado, mensajeCustom = null) {
       break;
 
     case "error":
-      estadoTexto.textContent = mensajeCustom || "Error de red";
+      estadoTexto.textContent = mensajeCustom || "Backend desconectado";
       estadoTexto.classList.add("error");
       checkbox.disabled = false;
       break;
@@ -37,90 +46,84 @@ function setEstadoUI(estado, mensajeCustom = null) {
   }
 }
 
-// Función helper para fetch con timeout
-async function fetchConTimeout(url, options, timeoutMs = 5000) {
+// fetch con timeout (opcional pero útil)
+async function fetchConTimeout(url, options = {}, timeoutMs = 4000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
-  
+
   try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal
-    });
+    const resp = await fetch(url, { ...options, signal: controller.signal });
     clearTimeout(timeout);
-    return response;
-  } catch (error) {
+    return resp;
+  } catch (e) {
     clearTimeout(timeout);
-    throw error;
+    throw e;
   }
 }
 
-// Evento: Al mover el interruptor
-checkbox.addEventListener("change", async () => {
-  const nuevoValor = checkbox.checked ? "on" : "off";
-  const estadoAnterior = !checkbox.checked;
-
-  setEstadoUI("loading");
-
+// Día 4: encender / apagar con try/catch
+async function encender() {
   try {
-    const resp = await fetchConTimeout("http://localhost:3001/api/eventos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        deviceId: "luz",
-        tipo: "power",
-        valor: nuevoValor,
-        fuente: "web"
-      })
-    });
-
-    if (!resp.ok) {
-      const errorData = await resp.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP ${resp.status}`);
-    }
-
-    // 👇 IMPORTANTE: Ver qué responde el backend
-    const respuesta = await resp.json();
-    console.log("Respuesta del backend:", respuesta);
-
-    // Actualizar UI con el valor que ENVIAMOS (no dependemos de la respuesta)
-    setEstadoUI(nuevoValor);
-
+    const resp = await fetchConTimeout(`${API}/on`, { method: "POST" });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    setEstadoUI("on");
   } catch (e) {
-    console.error("Fallo en POST /api/eventos:", e);
-    
-    checkbox.checked = estadoAnterior;
-    
-    const msg = e.name === 'AbortError' ? 'Timeout: sin respuesta' : 
-                (e.message || 'Error desconocido');
-    setEstadoUI("error", msg);
+    console.error("encender() falló:", e);
+    setEstadoUI("ERROR", "Backend desconectado");
+    throw e;
   }
-});
+}
 
-// Obtener estado inicial al cargar
+async function apagar() {
+  try {
+    const resp = await fetchConTimeout(`${API}/off`, { method: "POST" });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    setEstadoUI("off");
+  } catch (e) {
+    console.error("apagar() falló:", e);
+    setEstadoUI("ERROR", "Backend desconectado");
+    throw e;
+  }
+}
+
+// Switch → llama encender/apagar
+if (checkbox) {
+  checkbox.addEventListener("change", async () => {
+    const estadoAnterior = !checkbox.checked;
+
+    setEstadoUI("loading");
+
+    try {
+      if (checkbox.checked) {
+        await encender();
+      } else {
+        await apagar();
+      }
+    } catch (e) {
+      // revertir switch si falló
+      checkbox.checked = estadoAnterior;
+    }
+  });
+}
+
+// Estado inicial desde backend
 async function cargarEstadoInicial() {
   setEstadoUI("loading");
-  
+
   try {
-    const resp = await fetchConTimeout("http://localhost:3001/api/eventos/luz/ultimo");
-    
-    if (resp.ok) {
-      const data = await resp.json();
-      console.log("Estado inicial del backend:", data);
-      setEstadoUI(data.valor);
-    } else {
-      console.warn("Backend no devolvió estado inicial, usando OFF por defecto");
-      setEstadoUI("off");
-    }
+    const resp = await fetchConTimeout(`${API}/status`, { method: "GET" });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const data = await resp.json();
+    // data.estado debe ser "on" o "off"
+    setEstadoUI(data.estado ?? "off");
   } catch (e) {
     console.warn("No se pudo cargar estado inicial:", e);
-    setEstadoUI("off");
+    // deja el switch en OFF y muestra el error (sin romper la UI)
+    if (checkbox) checkbox.checked = false;
+    setEstadoUI("ERROR", "Backend desconectado");
   }
 }
 
-// Ejecutar SOLO al cargar la página
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', cargarEstadoInicial);
-} else {
-  cargarEstadoInicial();
-}
+// Ejecutar al cargar
+cargarEstadoInicial();

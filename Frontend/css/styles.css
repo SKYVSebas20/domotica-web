@@ -107,11 +107,6 @@ body{
   border-top: 1px solid var(--divider);
 }
 
-.sidebar__item.is-disabled{
-  opacity: 0.40;
-  pointer-events: none;
-}
-
 /* ================= Main layout ================= */
 
 .main-section{

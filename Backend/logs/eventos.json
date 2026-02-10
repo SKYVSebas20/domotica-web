@@ -1,3 +1,18 @@
 [
-
+  {
+    "id": "fe7bc6e78836d819c45348c73",
+    "ts": "2026-02-10T01:39:57.683Z",
+    "deviceId": "luz",
+    "tipo": "power",
+    "valor": "on",
+    "fuente": "web"
+  },
+  {
+    "id": "026a77648f863819c45349727",
+    "ts": "2026-02-10T01:40:00.423Z",
+    "deviceId": "luz",
+    "tipo": "power",
+    "valor": "off",
+    "fuente": "web"
+  }
 ]
