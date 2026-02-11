@@ -1,196 +1,173 @@
-:root{
-  /* Base */
-  --bg-app: #0b0d10;                 /* fondo general */
-  --text: rgba(255,255,255,0.86);    /* texto principal */
-  --text-muted: rgba(255,255,255,0.62);
-  --text-dim: rgba(255,255,255,0.45);
+/* ==========================================================================
+   1. DESIGN TOKENS
+   ========================================================================== */
+:root {
+  /* --- Capa 1: Primitivos (Paleta base) --- */
+  --color-neutral-900: #0b0d10;
+  --color-neutral-800: #141414;
+  --color-white: #ffffff;
+  --color-purple-500: #7c5cff;
+  --color-pink-500: #ff6f91;
+  --color-orange-400: #ff9671;
+  --color-red-500: #ff4d4d;
+  --color-green-400: #2ee9a6;
 
-  /* Sidebar glass */
-  --panel: rgba(20,20,20,0.72);      /* panel translúcido */
-  --panel-2: rgba(0,0,0,0.28);       /* input/search bg */
-  --border: rgba(255,255,255,0.06);  /* bordes sutiles */
-  --divider: rgba(255,255,255,0.06);
+  /* --- Capa 2: Semánticos (Uso funcional) --- */
+  --bg-app: var(--color-neutral-900); /* Fondo general de la app */
+  --panel-bg: rgba(20, 20, 20, 0.72); /* Fondo de paneles con efecto glassmorphism */
+  --accent-main: var(--color-pink-500); /* Color principal de acento para botones, enlaces, etc. */
+  --accent-sec: var(--color-orange-400); /* Color secundario de acento para hover, estados activos, etc. */
+  
+  --text-main: rgba(255, 255, 255, 0.86);
+  --text-muted: rgba(255, 255, 255, 0.62);
+  
+  --status-ok: var(--color-green-400);
+  --status-error: var(--color-red-500);
+  --status-loading: var(--color-purple-500);
 
-  /* Estados / interacción */
-  --hover: rgba(255,255,255,0.06);   /* hover item */
-  --active: rgba(255,255,255,0.09);  /* item activo */
-  --focus: rgba(255,255,255,0.14);   /* focus ring suave */
+  /* --- Sistema de Espaciado (Escala de 8px) --- */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem;  /* 8px */
+  --space-3: 1rem;    /* 16px */
+  --space-4: 1.5rem;  /* 24px */
+  --space-5: 2rem;    /* 32px */
 
-  /* Sombras (en variables para consistencia) */
-  --shadow-panel: 0 18px 40px rgba(0,0,0,0.45);
-  --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.04);
+  /* --- Dimensiones de Layout --- */
+  --sidebar-width: 240px;
+  --main-padding: var(--space-4); /* Usamos nuestra escala */
 
-  /* Accento */
-  --accent: #7c5cff;                 /* violeta sutil */
-  --accent-2: #2ee9a6;               /* verde sutil opcional */
-
-  /* Radio y blur */
+  /* --- Estética (Glassmorphism & Radios) --- */
   --radius-lg: 18px;
   --radius-md: 14px;
-  --radius-sm: 12px;
   --blur: 16px;
+  --shadow-panel: 0 18px 40px rgba(0,0,0,0.45);
+  --border-subtle: rgba(255, 255, 255, 0.06);
 }
 
-/* ================= Base ================= */
+/* ==========================================================================
+   2. RESET MODERNO
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
-*{ box-sizing: border-box; }
-
-body{
+* {
   margin: 0;
-  background: var(--bg-app);
-  color: var(--text);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  padding: 0;
 }
 
-/* ================= Sidebar (glass) ================= */
+body {
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
 
-.sidebar{
+/* ==========================================================================
+   3. LAYOUT & COMPONENTES
+   ========================================================================== */
+
+/* Sidebar con efecto Glassmorphism */
+.sidebar {
   position: fixed;
-  inset: 20px auto 20px 20px; /* top right bottom left */
-  width: 280px;
-  padding: 14px;
+  inset: var(--space-4) auto var(--space-4) var(--space-4);
+  width: var(--sidebar-width);
+  padding: var(--space-3);
   border-radius: var(--radius-lg);
-
-  background: var(--panel);
-  border: 1px solid var(--border);
-
-  box-shadow: var(--shadow-panel), var(--shadow-inset);
-  color: var(--text);
+  background: var(--panel-bg);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(var(--blur));
+  box-shadow: var(--shadow-panel);
 }
 
-.sidebar__header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding: 8px 6px 12px;
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
-
-.sidebar__nav{
-  display:flex;
-  flex-direction:column;
-  gap: 6px;
-  padding: 4px;
-}
-
-.sidebar__item{
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  padding: 10px 10px;
-  border-radius: var(--radius-md);
-  color: var(--text-muted);
-  text-decoration:none;
-}
-
-.sidebar__icon{
-  width: 18px;
-  display:inline-flex;
-  justify-content:center;
-  opacity: 0.75;
-}
-
-.sidebar__item:hover{
-  background: var(--hover);
-  color: var(--text);
-}
-
-.sidebar__item.is-active{
-  background: var(--active);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-  color: var(--text);
-}
-
-.sidebar__divider{
-  height: 10px;
-  margin: 6px 0;
-  border-top: 1px solid var(--divider);
-}
-
-/* ================= Main layout ================= */
-
-.main-section{
-  margin-left: 320px; /* deja espacio para sidebar (280 + padding/aire) */
-  padding: 20px;
-}
-
-/* ================= Switch (On/Off) ================= */
-
-.On-Off-switch{
+.sidebar__item {
   display: flex;
   align-items: center;
-  flex-direction: column;
-  gap: 14px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
-/* label = “pista” del switch */
-.label{
+.sidebar__item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+
+.sidebar__item.is-active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+
+/* Sección Principal con margen inteligente */
+.main-section {
+  /* Ancho del sidebar + posición left del sidebar + padding deseado */
+  margin-left: calc(var(--sidebar-width) + var(--space-4) + var(--main-padding));
+  padding: var(--main-padding);
+}
+
+/* ==========================================================================
+   4. COMPONENTES IOT (Switch)
+   ========================================================================== */
+
+.On-Off-switch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Estados del texto */
+#status-texto.ok { color: var(--status-ok); }
+#status-texto.error { color: var(--status-error); }
+#status-texto.loading { color: var(--status-loading); font-style: italic; }
+
+/* Escondemos el checkbox real */
+#checkbox { display: none; }
+
+/* El "track" del switch */
+.label {
   height: 60px;
   width: 120px;
   border-radius: 30px;
-
-  background: rgba(255,255,255,0.86);
-  border: 1px solid var(--border);
-
-  box-shadow:
-    inset 0 0 5px 4px rgba(255,255,255,0.20),
-    inset 0 0 20px 1px rgba(0,0,0,0.35),
-    0 16px 30px rgba(0,0,0,0.25),
-    inset 0 0 0 3px rgba(0,0,0,0.25);
-
-  display:flex;
-  align-items:center;
+  background: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
   cursor: pointer;
   position: relative;
   transition: transform 0.25s;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
 }
 
-.label:hover{
-  transform: perspective(100px) rotateX(5deg) rotateY(-5deg);
-}
-
-#checkbox{
-  display: none;
-}
-
-/* knob */
-.label::before{
-  position: absolute;
+/* El "knob" (círculo) */
+.label::before {
   content: "";
-  height: 40px;
-  width: 40px;
+  position: absolute;
+  height: 44px;
+  width: 44px;
   border-radius: 50%;
-  left: 10px;
-
-  background: #0b0d10;
-  box-shadow:
-    0 10px 18px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.10);
-
-  transition: left 0.25s, background 0.25s, box-shadow 0.25s;
+  left: 8px;
+  background: var(--color-neutral-900);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-/* checked: mueve knob y pinta con accent */
-#checkbox:checked ~ .label::before{
-  left: 70px;
-  background: linear-gradient(315deg, var(--accent) 0%, var(--accent-2) 70%);
+/* Estado ON */
+#checkbox:checked ~ .label::before {
+  left: 68px;
+  background: var(--brand-gradient);
 }
 
-#checkbox:checked ~ .label:hover{
-  transform: perspective(100px) rotateX(-5deg) rotateY(5deg);
-}
-
-/* ================= Texto estado ================= */
-
-#status-texto.ok{
-  color: var(--accent-2);
-}
-
-#status-texto.error{
-  color: #ff4d4d;
-}
-
-#status-texto.loading{
-  color: var(--accent);
-  font-style: italic;
+.label:hover {
+  transform: scale(1.05);
 }
