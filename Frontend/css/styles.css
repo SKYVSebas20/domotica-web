@@ -1,29 +1,17 @@
-/* ==========================================================================
-   1. DESIGN TOKENS
-   ========================================================================== */
+
 :root {
+  /* DESING TOKENS: Variables CSS para colores, espaciados, dimensiones y estética */
+
   /* --- Capa 1: Primitivos (Paleta base) --- */
   --color-neutral-900: #0b0d10;
   --color-neutral-800: #141414;
   --color-white: #ffffff;
-  --color-purple-500: #7c5cff;
-  --color-pink-500: #ff6f91;
-  --color-orange-400: #ff9671;
-  --color-red-500: #ff4d4d;
-  --color-green-400: #2ee9a6;
 
   /* --- Capa 2: Semánticos (Uso funcional) --- */
   --bg-app: var(--color-neutral-900); /* Fondo general de la app */
-  --panel-bg: rgba(20, 20, 20, 0.72); /* Fondo de paneles con efecto glassmorphism */
-  --accent-main: var(--color-pink-500); /* Color principal de acento para botones, enlaces, etc. */
-  --accent-sec: var(--color-orange-400); /* Color secundario de acento para hover, estados activos, etc. */
-  
+  --panel-bg: rgba(20, 20, 20, 0.72); /* Fondo de paneles con efecto glassmorphism */  
   --text-main: rgba(255, 255, 255, 0.86);
   --text-muted: rgba(255, 255, 255, 0.62);
-  
-  --status-ok: var(--color-green-400);
-  --status-error: var(--color-red-500);
-  --status-loading: var(--color-purple-500);
 
   /* --- Sistema de Espaciado (Escala de 8px) --- */
   --space-1: 0.25rem; /* 4px */
